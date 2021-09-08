@@ -13,6 +13,6 @@ export interface Question {
 }
 
 export interface QuestionDTO {
-    title: string;
     detail: string;
+    title: string;
 }

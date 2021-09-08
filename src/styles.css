@@ -1,6 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 /* @import 'https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css'; */
 
+@import 'https://cdn.ckeditor.com/ckeditor5/29.2.0/classic/ckeditor.js';
+@import 'https://cdn.ckeditor.com/ckeditor5/29.2.0/inline/ckeditor.js';
+
 body{
     margin-top:20px;
     color: #1a202c;
@@ -241,6 +244,6 @@ body{
 
   .nav-link-correct {
     display: flex;
-    align-items: center;
+    align-items: right;
     color: rgb(6, 177, 49);
 }

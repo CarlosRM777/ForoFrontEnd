@@ -1,13 +1,14 @@
-import { getLocaleDateFormat } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { NodeWithI18n } from '@angular/compiler';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { Answer, AnswerDTO } from './Answer';
 import { Author } from './Author';
 import { ForoService } from './foro.service';
 import { Question, QuestionDTO } from './Question';
+import * as ClassicBuild from '@ckeditor/ckeditor5-build-classic';
+import { stringify } from '@angular/compiler/src/util';
+import { CKEditorComponent } from '@ckeditor/ckeditor5-angular';
+
 
 @Component({
   selector: 'app-root',
@@ -17,18 +18,25 @@ import { Question, QuestionDTO } from './Question';
 export class AppComponent implements OnInit{
   public questions: Question[] = [];
   public answers: Answer[]  = [];
-  public answered_impression : boolean[] = [];
   public author_login:Author = {id: 0, name: "", url:"", username:"", password:""};
   public question: Question = {id: 0, title:"",detail: "",author: this.author_login,answers : [],views : 0, 
                               creationDate: new Date(), idcorrectAnswer:0};
   public isLogin : boolean = false;
   public isWrongCredentials : boolean = false;
+  public Editor = ClassicBuild;
+  public newQDet: string = "";
+  @ViewChild( 'chkAnswers' ) edansComponent: CKEditorComponent | undefined;
+  @ViewChild( 'chkQuestions' ) edqueComponent: CKEditorComponent | undefined;
 
   constructor(private foroService : ForoService) {}
   ngOnInit(): void {
+    this.edqueComponent?.editorInstance?.destroy();
+    this.edansComponent?.editorInstance?.destroy();
     this.getQuestions();
     this.isLogin = false;
     //this.getAuthor("CarlosRM7","123456");
+
+    
   }
   
   public onLogin(loginForm : NgForm){
@@ -81,6 +89,7 @@ export class AppComponent implements OnInit{
   }
 
   public getQuestions() : void {
+    this.edansComponent?.editorInstance?.destroy();
     this.foroService.getQuestions().subscribe(
       (response : Question[]) => {
          this.questions = response;
@@ -92,16 +101,22 @@ export class AppComponent implements OnInit{
   }
 
   public onAddQuestion(newQuestionForm : NgForm) : void {
-    document.getElementById('MBtnQClose')?.click();
-    var question : QuestionDTO = {
-      title: newQuestionForm.value["MnewTitle"],
-      detail: newQuestionForm.value["MnewDetail"]
+    
+    //var det  = document.getElementById("threadDetail")?.nodeValue;
+    //if (det?.length===)
+    //  det = "";
+    var questionDTO : QuestionDTO = {
+      detail: this.newQDet,
+      title: newQuestionForm.value["MnewTitle"]
+      
     };
-    this.foroService.createQuestion(this.author_login.id, question).subscribe(
+    document.getElementById('MBtnQClose')?.click();
+    this.foroService.createQuestion(this.author_login.id, questionDTO).subscribe(
       (response: Question) => {
         console.log(response);
         this.getQuestions();
         newQuestionForm.resetForm();
+        this.newQDet = "";
       },
       (error: HttpErrorResponse) => {
         alert(error.message);
@@ -126,6 +141,7 @@ export class AppComponent implements OnInit{
   }
 
   public onGetAnswers(question: Question) : void {
+    this.edqueComponent?.editorInstance?.destroy();
     this.question = question;
     this.foroService.updateQuestionViews(question.id).subscribe(
       (response: Question) => {
@@ -139,7 +155,7 @@ export class AppComponent implements OnInit{
 
   public onAddImpression(like_dislike:boolean, answer: Answer) : void {
     if (this.searchPreviousVote(answer)) {
-      alert(`${this.author_login.username} You have already vote for this Answer`);
+      alert(`${this.author_login.username} You can't vote, you have already vote for this Answer`);
       return;
     }
     this.foroService.updateAnswer(answer.id, this.author_login.id , like_dislike).subscribe(
@@ -149,7 +165,7 @@ export class AppComponent implements OnInit{
       (error: HttpErrorResponse) => {
         alert(error.message);
       });
-      alert(`${this.author_login.username} vote realized`);
+      alert(`${this.author_login.username} vote realized!`);
       document.getElementById('MUbtn_submit')?.click();
   }
 

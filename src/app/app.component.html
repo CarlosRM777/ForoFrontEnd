@@ -89,11 +89,12 @@
                         <div class="media forum-item">
                             <a href="#" data-toggle="collapse" data-target=".forum-content"><img src='{{"https://bootdey.com/img/Content/avatar/avatar"+(i%5+1)+".png"}}' class="mr-3 rounded-circle" width="50" alt="User" /></a> 
                             <!-- "https://bootdey.com/img/Content/avatar/avatar1.png"-->
-                            <div class="media-body col-9">
+                            <div class="media-body col-11">
                                 <h6><a href="#" (click)="onGetAnswers(question)" data-toggle="collapse" data-target=".forum-content" class="text-body">{{question?.title}}</a></h6>
-                                <p class="text-secondary">
+                                <!-- <p class="text-secondary">
                                     {{question?.detail}}
-                                </p>
+                                </p> -->
+                                <ckeditor #chkQuestions [editor]="Editor" data="{{question?.detail}}" [config]="{ toolbar: [ ] }" [disabled]="true"></ckeditor>
                                 <p class="text-muted"><a href="javascript:void(0)">{{question?.author?.username}} </a> created a Question on
                                     <!-- <span class="text-secondary font-weight-bold">{{question?.creationDate}}</span> -->
                                     <small class="text-secondary font-weight-bold">{{question?.creationDate}}</small>
@@ -104,10 +105,10 @@
                                 <span><i class="far fa-comment ml-2"></i> {{question?.answers?.length}}</span>
                                 <div class="row">
                                     <div *ngIf="this.question.idcorrectAnswer && this.question.idcorrectAnswer!==0" class="nav-link-correct">
-                                        <h6>Question Solved &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h6>
+                                        <h6>Question Solved</h6>
                                     </div>
                                     <div *ngIf="!this.question.idcorrectAnswer || this.question.idcorrectAnswer===0" class="label-solved">
-                                        <h6>Question Not Solved Yet&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h6>
+                                        <h6>Not Solved Yet</h6>
                                     </div>
                                 </div>
                             </div>
@@ -154,10 +155,13 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
-                    <div class="article-content">
-                        <p>{{question.detail}}</p>
-                    </div>
+                    <div class="article-content"> 
+                        <ckeditor [editor]="Editor" [(ngModel)]="question.detail" [config]="{ toolbar: [ ] }" [disabled]="true"></ckeditor>
+
+                        <!-- <p>{{question.detail}}</p> -->
+                    </div> 
                 </article>
             </div>
             <!-- </div> -->
@@ -169,7 +173,8 @@
                             	<img class="rounded-circle" width="60" alt="" src="https://bootdey.com/img/Content/avatar/avatar1.png">
                             </div> 
                             <div class="col-xs-12 col-sm-10 col-lg-11">
-                                <textarea name="Mnewdetail" ngModel class="form-control" id="message" placeholder="Your Answer" required></textarea>
+                                <ckeditor name="Mnewdetail" ngModel [editor]="Editor" placeholder="Your Answer" required></ckeditor>
+                                <!-- <textarea name="Mnewdetail" ngModel class="form-control" id="message" placeholder="Your Answer" required></textarea> -->
                             </div>
                         </div>  
                         <button [disabled]="newAnswerForm.invalid" type="submit" class="btn btn-primary btn-sm">Submit</button>
@@ -194,25 +199,26 @@
                                 <!-- <small class="text-muted ml-2">1 hour ago</small> -->
                                 <small class="text-muted ml-2"><i class="fa fa-calendar"></i>{{answer.date}}</small>
                                 <div class="mt-3 font-size-sm">
-                                    <p>
+                                    <!-- <p>
                                         {{answer.detail}}
                                     </p>
-                                    <p></p>
+                                    <p></p> -->
+                                    <ckeditor #chkAnswers [editor]="Editor" data="{{answer.detail}}" [config]="{ toolbar: [ ] }" [disabled]="true"></ckeditor>
                                 </div>
                             </div>
-                            <div class="row align-items-center">
-                                <div class="text-muted col-3">
-                                    <a class="far fa-thumbs-up md-2" (click)="onAddImpression(true, answer)">{{answer.authors_liked.length}}</a>
-                                    <a class="far fa-thumbs-down md-2" (click)="onAddImpression(false, answer)">{{answer.authors_disliked.length}}</a>
-                                </div>
+                        </div>
+                        <div class="media-body">
+                            <div class="text-muted col-3">
+                                <a style="cursor: pointer;" class="far fa-thumbs-up md-2" (click)="onAddImpression(true, answer)">{{answer.authors_liked?.length}}</a>
+                                <a style="cursor: pointer;" class="far fa-thumbs-down md-2" (click)="onAddImpression(false, answer)">{{answer.authors_disliked?.length}}</a>
                             </div>
-                            <div class="row align-items-center">
-                                <div>
-                                <a *ngIf="this.author_login.id === question.author.id && (!this.question.idcorrectAnswer || this.question.idcorrectAnswer===0)" href="javascript:void(0)" (click)="onSolveQuestion(answer)" class="nav-link-correct">Marcar como Correcta&nbsp;&nbsp;&nbsp;</a>
-                                </div>
-                                <div class="nav-link-correct" *ngIf="this.question.idcorrectAnswer && this.question.idcorrectAnswer!==0 && this.question.idcorrectAnswer===answer.id">
-                                    <h6>Correct Answer! &nbsp;&nbsp;&nbsp;&nbsp;</h6>
-                                </div>
+                        </div>
+                        <div class="media-body">
+                            <div class="col-12 align-self-end">
+                            <a *ngIf="this.author_login.id === question.author.id && (!this.question.idcorrectAnswer || this.question.idcorrectAnswer===0)" href="javascript:void(0)" (click)="onSolveQuestion(answer)" class="nav-link-correct">Marcar como Correcta&nbsp;&nbsp;&nbsp;</a>
+                            </div>
+                            <div class="nav-link-correct col-12" *ngIf="this.question.idcorrectAnswer && this.question.idcorrectAnswer!==0 && this.question.idcorrectAnswer===answer.id">
+                                <h6> &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Correct Answer!</h6>
                             </div>
                         </div>
                     </div>
@@ -255,11 +261,12 @@
                                 Please complete all the fields
                               </div>
                         </div>
-                        <textarea class="form-control summernote" style="display: none;"></textarea>
-                        <div class="form-group">
+                        <!-- <textarea class="form-control summernote" style="display: none;"></textarea>
+                        <div class="form-group"> -->
                         <label for="threadDetail">Detail</label>
-                        <textarea class="form-control" name="MnewDetail" ngModel id="threadDetail" placeholder="Enter Detail" autofocus="" rows="5" required></textarea>
-                          <div class="valid-feedback">
+                        <!-- <textarea class="form-control" name="MnewDetail" ngModel id="threadDetail" placeholder="Enter Detail" autofocus="" rows="5" required></textarea> -->
+                        <ckeditor id="threadDetail" name="Mnewdetail2" [(ngModel)]="this.newQDet" [editor]="Editor" required></ckeditor> 
+                        <!-- <div class="valid-feedback">
                             Looks good!
                           </div> 
                           <div class="invalid-feedback">
@@ -267,8 +274,8 @@
                           </div>
                           <div class="invalid-tooltip">
                             Please complete all the fields
-                          </div>
-                        </div>
+                          </div> -->
+                        <!-- </div> -->
                     </div>
                     <div class="modal-footer">
                         <button id="MBtnQClose" type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
