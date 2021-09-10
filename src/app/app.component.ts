@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { NgForm, NgModel } from '@angular/forms';
 import { Answer, AnswerDTO } from './Answer';
 import { Author } from './Author';
 import { ForoService } from './foro.service';
@@ -22,9 +22,10 @@ export class AppComponent implements OnInit{
   public question: Question = {id: 0, title:"",detail: "",author: this.author_login,answers : [],views : 0, 
                               creationDate: new Date(), idcorrectAnswer:0};
   public isLogin : boolean = false;
+  public isValiduser : boolean = true;
   public isWrongCredentials : boolean = false;
   public Editor = ClassicBuild;
-  public newQDet: string = "";
+  public newQDet: string = "<p><\p><p><\p><p><\p>";
   @ViewChild( 'chkAnswers' ) edansComponent: CKEditorComponent | undefined;
   @ViewChild( 'chkQuestions' ) edqueComponent: CKEditorComponent | undefined;
 
@@ -80,6 +81,7 @@ export class AppComponent implements OnInit{
       (response : Author) => {
         this.author_login = response;
         this.isLogin = true;
+        registerForm.resetForm();
         document.getElementById('MRbtn_cancel')?.click();
      },
      (error: HttpErrorResponse) => {
@@ -89,7 +91,7 @@ export class AppComponent implements OnInit{
   }
 
   public getQuestions() : void {
-    this.edansComponent?.editorInstance?.destroy();
+    //this.edansComponent?.editorInstance?.destroy();
     this.foroService.getQuestions().subscribe(
       (response : Question[]) => {
          this.questions = response;
@@ -116,7 +118,7 @@ export class AppComponent implements OnInit{
         console.log(response);
         this.getQuestions();
         newQuestionForm.resetForm();
-        this.newQDet = "";
+        this.newQDet = "<p><\p><p><\p><p><\p>";;
       },
       (error: HttpErrorResponse) => {
         alert(error.message);
@@ -141,7 +143,7 @@ export class AppComponent implements OnInit{
   }
 
   public onGetAnswers(question: Question) : void {
-    this.edqueComponent?.editorInstance?.destroy();
+    //this.edqueComponent?.editorInstance?.destroy();
     this.question = question;
     this.foroService.updateQuestionViews(question.id).subscribe(
       (response: Question) => {
@@ -154,6 +156,10 @@ export class AppComponent implements OnInit{
   }
 
   public onAddImpression(like_dislike:boolean, answer: Answer) : void {
+    if (!this.author_login.id) {
+      document.getElementById('Login_button')?.click();
+      return;
+    }
     if (this.searchPreviousVote(answer)) {
       alert(`${this.author_login.username} You can't vote, you have already vote for this Answer`);
       return;
@@ -218,12 +224,22 @@ export class AppComponent implements OnInit{
         results.push(lquestion);
       }
     }
+    //this.edqueComponent?.editorInstance?.destroy();
     this.questions=results;
     if (results.length === 0 || !key) 
       this.getQuestions();
   }
 
   public searchUser(key: string) : void{
-    
+    this.isValiduser = true;
+    this.foroService.getAuthor(key, "").subscribe(
+      (response : Author) => {
+          this.author_login = response;
+          if (response.id === 1) 
+            this.isValiduser = false; 
+      },
+      (error: HttpErrorResponse) => {
+        alert(error.message);
+      });
   }
 }

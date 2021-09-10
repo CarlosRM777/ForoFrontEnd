@@ -4,7 +4,8 @@
 <div class="main-body p-0">
     <div class="inner-wrapper">
         <!-- Inner sidebar -->
-        <div class="inner-sidebar">
+        <!-- <div class="inner-sidebar"> -->
+            <div class="inner-main">
             <!-- Inner sidebar header -->
             <div class="inner-sidebar-header justify-content-center">
                 <button *ngIf="this.isLogin" class="btn btn-primary has-icon btn-block" type="button" data-toggle="modal" data-target="#threadModal">
@@ -18,7 +19,7 @@
             <!-- /Inner sidebar header -->
 
             <!-- Inner sidebar body -->
-            <div class="inner-sidebar-body p-0">
+            <!-- <div class="inner-sidebar-body p-0">
                 <div class="p-3 h-100" data-simplebar="init">
                     <div class="simplebar-wrapper" style="margin: -16px;">
                         <div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div>
@@ -43,7 +44,7 @@
                     <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="width: 0px; display: none;"></div></div>
                     <div class="simplebar-track simplebar-vertical" style="visibility: visible;"><div class="simplebar-scrollbar" style="height: 151px; display: block; transform: translate3d(0px, 0px, 0px);"></div></div>
                 </div>
-            </div>
+            </div> -->
             <!-- /Inner sidebar body -->
         </div>
         <!-- /Inner sidebar -->
@@ -52,6 +53,15 @@
         <div class="inner-main">
             <!-- Inner main header -->
             <div class="inner-main-header">
+                <div class="inner-sidebar-header justify-content-center">
+                    <button *ngIf="this.isLogin" class="btn btn-success has-icon btn-block" type="button" data-toggle="modal" data-target="#threadModal">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus mr-2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        NEW QUESTION
+                    </button> 
+                </div>
                 <!-- <a class="nav-link nav-icon rounded-circle nav-link-faded mr-3 d-md-none" href="#" data-toggle="inner-sidebar"><i class="material-icons">arrow_forward_ios</i></a> -->
 <!--                 <select class="custom-select custom-select-sm w-auto mr-1">
     
@@ -62,21 +72,23 @@
                     <option value="3">No Replies Yet</option>
                 </select> -->
 
-                <button *ngIf="!this.isLogin" class="btn btn-primary" type="button" data-toggle="modal" data-target="#loginModal">
-                    LOGIN
-                </button> 
-
-                <button *ngIf="this.isLogin" (click)="onLogout()" class="btn btn-light" type="button" data-toggle="modal">
-                    LOGOUT
-                </button> 
-
-                <label *ngIf="this.isLogin" class="label-welcome"><span class="text-center font-weight-bold">
+                <label style="cursor: pointer;" *ngIf="this.isLogin" class="label-welcome"><span class="text-center font-weight-bold">
                    Bienvenido {{author_login.name}}</span></label>
+
+                   <label style="cursor: pointer;" *ngIf="!this.isLogin" class="nav-link-correct" (click)="onAddImpression(true, this.answers[0])"><span class="text-center font-weight-bold">
+                    Foro Manager te da la bienvenida, loguéate o regístrate al Sistema! </span></label>
                 <!--<div class="col-4">-->
                  <span class="input-icon input-icon-sm ml-auto w-auto"> 
                     <input (ngModelChange)="searchQuestions(key.value)" ngModel #key="ngModel" type="text" class="form-control form-control-sm bg-gray-200 border-gray-200 shadow-none mb-4 mt-4" placeholder="Search Questions" />
                  </span> 
                 <!--</div>-->
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button id="Login_button" *ngIf="!this.isLogin" class="btn btn-primary" type="button" data-toggle="modal" data-target="#loginModal">
+                    LOGIN or REGISTER
+                </button>  
+                <button *ngIf="this.isLogin" (click)="onLogout()" class="btn btn-light" type="button" data-toggle="modal">
+                    LOGOUT
+                </button> 
             </div>
             <!-- /Inner main header -->
 
@@ -86,11 +98,11 @@
             <div class="inner-main-body p-2 p-sm-3 collapse forum-content show">
                 <div *ngFor = "let question of questions; let i = index" class="card mb-2">
                     <div class="card-body p-2 p-sm-3">
-                        <div class="media forum-item">
+                        <div class="media forum-item showtop">
                             <a href="#" data-toggle="collapse" data-target=".forum-content"><img src='{{"https://bootdey.com/img/Content/avatar/avatar"+(i%5+1)+".png"}}' class="mr-3 rounded-circle" width="50" alt="User" /></a> 
                             <!-- "https://bootdey.com/img/Content/avatar/avatar1.png"-->
-                            <div class="media-body col-11">
-                                <h6><a href="#" (click)="onGetAnswers(question)" data-toggle="collapse" data-target=".forum-content" class="text-body">{{question?.title}}</a></h6>
+                            <div class="media-body col-10">
+                                <h6><a href="#" (click)="onGetAnswers(question)" data-toggle="collapse" data-target=".forum-content" class="list-tittle">{{question?.title}}</a></h6>
                                 <!-- <p class="text-secondary">
                                     {{question?.detail}}
                                 </p> -->
@@ -100,10 +112,13 @@
                                     <small class="text-secondary font-weight-bold">{{question?.creationDate}}</small>
                                 </p>
                             </div>
-                            <div class="text-muted small text-center align-self-center">
+                            <div class="text-muted small align-self-center col-2">
+                                <div class="row justify-content-center">
+
                                 <span class="d-none d-sm-inline-block"><i class="far fa-eye"></i> {{question?.views}}</span>
                                 <span><i class="far fa-comment ml-2"></i> {{question?.answers?.length}}</span>
-                                <div class="row">
+                                </div>
+                                <div class="row justify-content-center">
                                     <div *ngIf="this.question.idcorrectAnswer && this.question.idcorrectAnswer!==0" class="nav-link-correct">
                                         <h6>Question Solved</h6>
                                     </div>
@@ -132,7 +147,7 @@
             <!-- Forum Detail -->
 
             <div class="inner-main-body p-2 p-sm-3 collapse forum-content"> 
-            <a href="#" (click)="getQuestions()" class="btn btn-light btn-sm mb-3 has-icon" data-toggle="collapse" data-target=".forum-content"><i class="fa fa-arrow-left mr-2"></i>BACK</a>
+            <a href="#" (click)="getQuestions()" class="btn btn-light btn-xl mb-6 has-icon" data-toggle="collapse" data-target=".forum-content"><i class="fa fa-arrow-left mr-5"></i>BACK</a>
 
             <div class="blog-single gray-bg">
                 <article class="article">
@@ -241,7 +256,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <form class="was-validated" #newQuestionForm="ngForm" (ngSubmit)="onAddQuestion(newQuestionForm)">
-                    <div class="modal-header d-flex align-items-center bg-primary text-white">
+                    <div class="modal-header d-flex align-items-center bg-success text-white">
                         <h6 class="modal-title mb-0" id="threadModalLabel">New Question</h6>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
@@ -279,7 +294,7 @@
                     </div>
                     <div class="modal-footer">
                         <button id="MBtnQClose" type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                        <button [disabled]="newQuestionForm.invalid" type="submit" class="btn btn-primary"> Post Question </button>
+                        <button [disabled]="newQuestionForm.invalid" type="submit" class="btn btn-success"> Post Question </button>
                     </div>
                 </form>
             </div>
@@ -299,10 +314,10 @@
         <div class="modal-body">
             <form class="form col-md-12 center-block was-validated" #loginForm="ngForm" (ngSubmit)="onLogin(loginForm)">
               <div class="form-group">
-                <input type="text" ngModel name="MLusername" class="form-control input-lg" placeholder="User" required>
+                <input type="text" ngModel name="MLusername" class="form-control input-lg" placeholder="User" required minlength="3">
               </div>
               <div class="form-group">
-                <input type="password" ngModel name="MLpassword" class="form-control input-lg" placeholder="Password" required>
+                <input type="password" ngModel name="MLpassword" class="form-control input-lg" placeholder="Password" required minlength="3">
             </div>
               <div class="form-group">
                 <button [disabled]="loginForm.invalid" type="submit" class="btn btn-primary btn-lg btn-block">Sign In</button>
@@ -340,24 +355,25 @@
                     <input type="text" ngModel name="MRname" class="form-control input-lg" placeholder="Name" required>
                   </div>
               <div class="form-group">
-                <input (ngModelChange)="searchUser(user.value)" ngModel #user="ngModel" type="text" ngModel name="MRusername" class="form-control input-lg" placeholder="User" required>
+                <input (ngModelChange)="searchUser(user.value)" valid="this.isLogin" ngModel #user="ngModel" type="text" name="MRusername" class="form-control input-lg" placeholder="User" required minlength="3" > 
               </div>
+              
               <div class="form-group">
-                <input type="password" ngModel name="MRpassword" class="form-control input-lg" placeholder="Password" required>
+                <input type="password" ngModel name="MRpassword" class="form-control input-lg" placeholder="Password" required minlength="3">
             </div>
             <div class="form-group">
                 <input type="text" ngModel name="MRurl" class="form-control input-lg" placeholder="URL">
             </div>
               <div class="form-group">
-                <button [disabled]="registerForm.invalid" type="submit" class="btn btn-primary btn-lg btn-block">Register</button>
+                <button [disabled]="registerForm.invalid || !this.isValiduser" type="submit" class="btn btn-success btn-lg btn-block">Register</button>
               </div>
             </form>
         </div>
         <div class="modal-footer">
             <div class="row">
-            <!-- <div *ngIf="this.isWrongCredentials" class="col-9 align-self-start">
-            <label class="label-error">Username is Already Used</label> 
-            </div> -->
+            <div *ngIf="!this.isValiduser" class="col-9 align-self-start">
+            <label class="label-error">Username is Already been Used</label> 
+            </div> 
             <div class="col-3">
             <button id="MRbtn_cancel" class="btn btn-light" data-dismiss="modal" aria-hidden="true">Cancel</button>
             </div>	
