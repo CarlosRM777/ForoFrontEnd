@@ -257,5 +257,13 @@ body{
 }
 
 .showtop .ck-editor__editable_inline{
-  max-height: 90px;
+  max-height: 50px;
+}
+
+.newquestion .ck-editor__editable_inline{
+  min-height: 230px;
+}
+
+.newanswer .ck-editor__editable_inline{
+  min-height: 120px;
 }

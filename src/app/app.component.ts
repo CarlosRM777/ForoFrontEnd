@@ -25,7 +25,7 @@ export class AppComponent implements OnInit{
   public isValiduser : boolean = true;
   public isWrongCredentials : boolean = false;
   public Editor = ClassicBuild;
-  public newQDet: string = "<p><\p><p><\p><p><\p>";
+  public newQDet: string = "";
   @ViewChild( 'chkAnswers' ) edansComponent: CKEditorComponent | undefined;
   @ViewChild( 'chkQuestions' ) edqueComponent: CKEditorComponent | undefined;
 
@@ -80,9 +80,10 @@ export class AppComponent implements OnInit{
     this.foroService.createAuthor(author).subscribe(
       (response : Author) => {
         this.author_login = response;
-        this.isLogin = true;
-        registerForm.resetForm();
+        //registerForm.resetForm();
         document.getElementById('MRbtn_cancel')?.click();
+        //alert("ID: " + this.author_login.id + " Nombre:" + this.author_login.name + " PWD:" +this.author_login.password);
+        this.isLogin = true;   
      },
      (error: HttpErrorResponse) => {
        alert(error.message);
@@ -110,15 +111,17 @@ export class AppComponent implements OnInit{
     var questionDTO : QuestionDTO = {
       detail: this.newQDet,
       title: newQuestionForm.value["MnewTitle"]
-      
     };
+    if (!this.author_login.id) {
+      alert("Debes loguearte primero");
+      return;
+    }
     document.getElementById('MBtnQClose')?.click();
     this.foroService.createQuestion(this.author_login.id, questionDTO).subscribe(
       (response: Question) => {
         console.log(response);
         this.getQuestions();
         newQuestionForm.resetForm();
-        this.newQDet = "<p><\p><p><\p><p><\p>";;
       },
       (error: HttpErrorResponse) => {
         alert(error.message);
